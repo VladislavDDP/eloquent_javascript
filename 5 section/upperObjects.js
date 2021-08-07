@@ -217,7 +217,6 @@ class MatrixIterator {
 
         return {value, 'done': false}
     }
-
 }
 
 // Matrix.prototype[Symbol.iterator] = function() {
@@ -335,8 +334,15 @@ class Group {
         this.group = []
     }
 
+    static from(data) {
+        let group =  new Group()
+        for (let value of data)
+            group.add(value)
+        return group
+    }
+
     add(value) {
-        if (!(value in this.group)) {
+        if (!this.has(value)) {
             this.group.push(value)
         }
     }
@@ -352,23 +358,91 @@ class Group {
     }
 }
 
+// my tests
 const group = new Group()
 group.add(1)
 group.add(3)
-
 console.log(group.has(1))
 console.log(group.has(2))
 console.log(group.has(3))
-
 group.delete(3)
 group.delete(1)
-
 group.group.forEach(element => {
     console.log(element)
 })
 
+// tests from book
+let new_group = Group.from([10, 20])
+console.log(new_group.has(10))
+// → true
+console.log(new_group.has(30))
+// → false
+new_group.add(10)
+new_group.delete(10)
+console.log(new_group.has(10))
+// → false
+
 
 // task 3
 
+console.log('ITERABLE GROUPS')
+
+class IterableGroup {
+    constructor() {
+        this.group = []
+    }
+
+    static from(data) {
+        let group =  new Group()
+        for (let value of data)
+            group.add(value)
+        return group
+    }
+
+    add(value) {
+        if (!this.has(value)) {
+            this.group.push(value)
+        }
+    }
+
+    delete(value) {
+        const index = this.group.indexOf(value)
+        if (index !== -1)
+            this.group.splice(index, 1)
+    }
+
+    has(value) {
+        return this.group.some(elem => elem === value)
+    }
+
+    [Symbol.iterator]() {
+        return new GroupIterator(this)
+    }
+}
+
+class GroupIterator {
+    constructor(group) {
+        this.group = group
+    }
+
+    next() {
+        if (this.y === this.matrix.height) return {'done': true}
+
+        let value = {
+            x: this.x,
+            y: this.y,
+            value: this.matrix.get(this.x, this.y)
+        }
+        
+        this.x++
+
+        if (this.x === this.matrix.width) {
+            this.x = 0
+            this.y++
+        }
+
+        return {value, 'done': false}
+    }
+}
 
 // task 4
