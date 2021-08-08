@@ -390,10 +390,11 @@ console.log('ITERABLE GROUPS')
 class IterableGroup {
     constructor() {
         this.group = []
+        this.index = 0
     }
 
     static from(data) {
-        let group =  new Group()
+        let group =  new IterableGroup()
         for (let value of data)
             group.add(value)
         return group
@@ -426,23 +427,24 @@ class GroupIterator {
     }
 
     next() {
-        if (this.y === this.matrix.height) return {'done': true}
+        if (this.group.index === this.group.group.length) return {'done': true}
 
-        let value = {
-            x: this.x,
-            y: this.y,
-            value: this.matrix.get(this.x, this.y)
-        }
+        let value = this.group.group[this.group.index]
         
-        this.x++
-
-        if (this.x === this.matrix.width) {
-            this.x = 0
-            this.y++
-        }
-
+        this.group.index++
         return {value, 'done': false}
     }
 }
 
+let group2 = IterableGroup.from([10,20,30,40])
+for (let value of group2) {
+    console.log(value)
+}
+
 // task 4
+
+let map = {one: true, two: true, hasOwnProperty: true};
+
+// Fix this call
+console.log(Object.prototype.hasOwnProperty.call(map, "one"))
+// → true
