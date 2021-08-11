@@ -51,3 +51,93 @@ function numberToString(n, base = 10) {
 }
 
 console.log(numberToString(13, 2)) 
+
+
+// try catch
+class WrongDirection extends Error {}
+
+function changeDirection(question) {
+    let direction = prompt('Enter direction: ')
+    if (!direction) throw new Error()
+    if (direction.toLowerCase() == 'l') return 'left'
+    else if (direction.toLowerCase() == 'r') return 'right'
+    else throw new WrongDirection(`Wrong diretion ${direction}! Try again...`) 
+}
+
+function look() {
+    if (changeDirection('Where are we going?') == 'left')
+        console.log('Home')
+    else console.log('Three wolfes')
+}
+
+try {
+    for(;;) {
+        try {
+            // look()
+            break
+        } catch(error) {
+            if (error instanceof WrongDirection) console.log(error)
+            else throw error
+        }
+    }
+} catch(e) {
+    console.log(e)
+}
+
+// task 1
+
+class RandError extends Error {}
+
+function primitiveMultiply(a, b) {
+    if (Math.random() < 0.2)  return a * b 
+    else throw new RandError('You are not a lucky person...')
+}
+
+for(;;) {
+    try {
+        console.log(primitiveMultiply(3, 4)) 
+        break
+    } catch(e) {
+        if (e instanceof RandError) console.log(e)
+        else throw e
+    }
+}
+
+
+// task 2
+
+const box = {
+    locked: true,
+    unlock() { this.locked = false; },
+    lock() { this.locked = true;  },
+    _content: [],
+    get content() {
+      if (this.locked) throw new Error("Locked!");
+      return this._content;
+    }
+  };
+  
+  function withBoxUnlocked(body) {
+    if (!box.locked) return body()
+
+    box.unlock()
+    try {
+        return body()
+    } finally {
+        box.lock()
+    }
+  }
+  
+  withBoxUnlocked(function() {
+    box.content.push("gold piece");
+  });
+  
+  try {
+    withBoxUnlocked(function() {
+      throw new Error("Pirates on the horizon! Abort!");
+    });
+  } catch (e) {
+    console.log("Error raised: " + e);
+  }
+  
+  console.log(box.locked);
